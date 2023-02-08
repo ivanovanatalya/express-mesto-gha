@@ -6,6 +6,8 @@ const User = require('../models/users');
 const ERROR_CODE = 400;
 const NOT_FOUND_CODE = 404;
 const SERVER_ERROR_CODE = 500;
+let NOT_FOUND_ERR = new Error();
+NOT_FOUND_ERR.name = "NotFoundError";
 
 const getAllUsers = (req, res) => {
   User.find({})
@@ -16,9 +18,14 @@ const getAllUsers = (req, res) => {
 const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (user === null) {
+        throw NOT_FOUND_ERR;
+      }
+      return res.send({ data: user });
+    })
     .catch((err) => {
-      if (err.name === 'NotFoundError') {
+      if (err.name === 'CastError' || err.name === 'NotFoundError') {
         return res.status(NOT_FOUND_CODE).send({
           message: 'Пользователь по указанному _id не найден',
         });
@@ -50,14 +57,19 @@ const updateUser = (req, res) => {
     { $set: { name, about } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (user === null) {
+        throw NOT_FOUND_ERR;
+      }
+      return res.send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE).send({
           message: 'Переданы некорректные данные при обновлении профиля',
         });
       }
-      if (err.name === 'NotFoundError') {
+      if (err.name === 'CastError' || err.name === 'NotFoundError') {
         return res.status(NOT_FOUND_CODE).send({
           message: 'Пользователь по указанному _id не найден',
         });
@@ -74,14 +86,20 @@ const updateAvatar = (req, res) => {
     { $set: { avatar } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+
+      if (user === null) {
+        throw NOT_FOUND_ERR;
+      }
+      res.send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(ERROR_CODE).send({
           message: 'Переданы некорректные данные при обновлении аватара',
         });
       }
-      if (err.name === 'NotFoundError') {
+      if (err.name === 'CastError' || err.name === 'NotFoundError') {
         return res.status(NOT_FOUND_CODE).send({
           message: 'Пользователь по указанному _id не найден',
         });
