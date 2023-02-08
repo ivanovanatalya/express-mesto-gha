@@ -17,5 +17,6 @@ router.post('/cards', createCard);
 router.delete('/cards/:cardId', deleteCard);
 router.put('/cards/:cardId/likes', setLike);
 router.delete('/cards/:cardId/likes', deleteLike);
+router.all('*', (res) => res.status(404).send({ message: 'Неверный путь' }));
 
 module.exports = router;

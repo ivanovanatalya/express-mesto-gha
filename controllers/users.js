@@ -6,8 +6,8 @@ const User = require('../models/users');
 const ERROR_CODE = 400;
 const NOT_FOUND_CODE = 404;
 const SERVER_ERROR_CODE = 500;
-let NOT_FOUND_ERR = new Error();
-NOT_FOUND_ERR.name = "NotFoundError";
+const NOT_FOUND_ERR = new Error();
+NOT_FOUND_ERR.name = 'NotFoundError';
 
 const getAllUsers = (req, res) => {
   User.find({})
@@ -25,7 +25,12 @@ const getUser = (req, res) => {
       return res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'NotFoundError') {
+      if (err.name === 'CastError') {
+        return res.status(ERROR_CODE).send({
+          message: 'Передан некорректный _id',
+        });
+      }
+      if (err.name === 'NotFoundError') {
         return res.status(NOT_FOUND_CODE).send({
           message: 'Пользователь по указанному _id не найден',
         });
@@ -87,7 +92,6 @@ const updateAvatar = (req, res) => {
     { new: true },
   )
     .then((user) => {
-
       if (user === null) {
         throw NOT_FOUND_ERR;
       }
