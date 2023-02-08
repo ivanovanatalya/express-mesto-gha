@@ -60,7 +60,7 @@ const updateUser = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { $set: { name, about } }, // добавить _id в массив, если его там нет
-    { new: true },
+    { new: true, runValidators: true },
   )
     .then((user) => {
       if (user === null) {

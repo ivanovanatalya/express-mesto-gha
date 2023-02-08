@@ -108,10 +108,13 @@ const deleteLike = (req, res) => {
     });
 };
 
+const wrongPath = (req, res) => res.status(NOT_FOUND_CODE).send({ message: 'Неверный путь' });
+
 module.exports = {
   getAllCards,
   createCard,
   deleteCard,
   setLike,
   deleteLike,
+  wrongPath,
 };

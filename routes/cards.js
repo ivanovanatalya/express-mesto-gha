@@ -10,6 +10,7 @@ const {
   deleteCard,
   setLike,
   deleteLike,
+  wrongPath,
 } = require('../controllers/cards');
 
 router.get('/cards', getAllCards);
@@ -17,6 +18,6 @@ router.post('/cards', createCard);
 router.delete('/cards/:cardId', deleteCard);
 router.put('/cards/:cardId/likes', setLike);
 router.delete('/cards/:cardId/likes', deleteLike);
-router.all('*', (res) => res.status(404).send({ message: 'Неверный путь' }));
+router.all('*', wrongPath);
 
 module.exports = router;
