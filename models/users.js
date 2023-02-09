@@ -1,5 +1,5 @@
 // models/user.js
-
+const validator = require('validator');
 const mongoose = require('mongoose');
 // Опишем схему:
 const userSchema = new mongoose.Schema({
