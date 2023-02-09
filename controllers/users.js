@@ -89,7 +89,7 @@ const updateAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { $set: { avatar } }, // добавить _id в массив, если его там нет
-    { new: true },
+    { new: true, runValidators: true },
   )
     .then((user) => {
       if (user === null) {
