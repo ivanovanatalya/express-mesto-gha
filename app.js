@@ -9,6 +9,8 @@ const userRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const { errors } = require('./middlewares/errors');
+// const errors = require('./middlewares/errors');
 
 const app = express();
 
@@ -33,12 +35,14 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(bodyParser.json()); // для собирания JSON-формата
 
-app.post('/signin', login);
 app.post('/signup', createUser);
+app.post('/signin', login);
 
 app.use(auth);
 
 app.use(userRoutes);
 app.use(cardsRoutes);
+
+app.use(errors);
 
 app.listen(3000);

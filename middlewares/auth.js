@@ -1,15 +1,13 @@
 // middlewares/auth.js
 
 const jwt = require('jsonwebtoken');
-const { UNAUTH_CODE } = require('../constants');
+const { UNAUTH_CODE } = require('./errors');
 
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return res
-      .status(UNAUTH_CODE)
-      .send({ message: 'Необходима авторизация' });
+    return res.status(UNAUTH_CODE).send({ message: 'Необходима авторизация' });
   }
 
   const token = authorization.replace('Bearer ', '');

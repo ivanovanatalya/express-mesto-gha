@@ -13,9 +13,9 @@ const {
 } = require('../controllers/users');
 
 router.get('/users', getAllUsers);
-router.get('/users/:userId', getUser);
 router.get('/users/me', getCurrentUser);
 router.patch('/users/me', updateUser);
+router.get('/users/:userId', getUser);
 router.patch('/users/me/avatar', updateAvatar);
 
 module.exports = router;
