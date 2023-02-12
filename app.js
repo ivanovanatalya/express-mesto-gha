@@ -5,12 +5,12 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const { errors } = require('celebrate');
 const userRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
-const { errors } = require('./middlewares/errors');
-// const errors = require('./middlewares/errors');
+const { errorHandler } = require('./middlewares/errors');
 
 const app = express();
 
@@ -44,5 +44,6 @@ app.use(userRoutes);
 app.use(cardsRoutes);
 
 app.use(errors);
+app.use(errorHandler);
 
 app.listen(3000);

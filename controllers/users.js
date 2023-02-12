@@ -5,8 +5,10 @@ const jwt = require('jsonwebtoken'); // импортируем модуль json
 const User = require('../models/users');
 const {
   UNAUTH_CODE,
+  FORBIDDEN_ERR,
   NOT_FOUND_ERR,
   GENERAL_ERR,
+  DATA_CONFLICT_CODE,
 } = require('../middlewares/errors');
 
 const getAllUsers = (req, res, next) => {
@@ -73,6 +75,13 @@ const createUser = (req, res, next) => {
           GENERAL_ERR.message = 'Переданы некорректные данные при создании пользователя';
           next(GENERAL_ERR);
         }
+
+        if (err.code === 11000) {
+          const duplicateErr = new Error();
+          duplicateErr.statusCode = DATA_CONFLICT_CODE;
+          duplicateErr.message = 'e-mail already exists';
+          next(duplicateErr);
+        }
         next(err);
       }));
 };
@@ -87,6 +96,9 @@ const updateUser = (req, res, next) => {
     .then((user) => {
       if (user === null) {
         throw NOT_FOUND_ERR;
+      }
+      if (user._id !== req.user._id) {
+        throw FORBIDDEN_ERR;
       }
       return res.send({ data: user });
     })
@@ -116,6 +128,9 @@ const updateAvatar = (req, res, next) => {
     .then((user) => {
       if (user === null) {
         throw NOT_FOUND_ERR;
+      }
+      if (user._id !== req.user._id) {
+        throw FORBIDDEN_ERR;
       }
       res.send({ data: user });
     })

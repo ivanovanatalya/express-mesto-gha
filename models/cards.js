@@ -1,5 +1,4 @@
 // models/user.js
-const validator = require('validator');
 const mongoose = require('mongoose');
 // Опишем схему:
 const cardSchema = new mongoose.Schema({
@@ -13,7 +12,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (v) => validator.isURL(v),
+      validator: (v) => /https?:\/\/(?:www.)?[0-9A-z-._~:/?#[\]@!$&'()*+,;=]+/.test(v),
       message: 'Некорректный URL',
     },
   },

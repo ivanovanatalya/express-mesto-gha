@@ -3,6 +3,7 @@
 
 const Card = require('../models/cards');
 const {
+  FORBIDDEN_ERR,
   NOT_FOUND_ERR,
   GENERAL_ERR,
 } = require('../middlewares/errors');
@@ -35,6 +36,9 @@ const deleteCard = (req, res, next) => {
     .then((card) => {
       if (!card || card.owner !== userId) {
         throw NOT_FOUND_ERR;
+      }
+      if (card.owner !== userId) {
+        throw FORBIDDEN_ERR;
       }
     })
     .then(Card.deleteOne({ _id: cardId }))
