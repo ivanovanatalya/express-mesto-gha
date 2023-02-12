@@ -5,6 +5,10 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const userRoutes = require('./routes/users');
+const cardsRoutes = require('./routes/cards');
+const { login, createUser } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 
 const app = express();
 
@@ -29,16 +33,10 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(bodyParser.json()); // для собирания JSON-формата
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: '63e3870a1b58ad93fe3db2c4', // вставьте сюда _id созданного в предыдущем пункте пользователя
-  };
+app.post('/signin', login);
+app.post('/signup', createUser);
 
-  next();
-});
-
-const userRoutes = require('./routes/users');
-const cardsRoutes = require('./routes/cards');
+app.use(auth);
 
 app.use(userRoutes);
 app.use(cardsRoutes);

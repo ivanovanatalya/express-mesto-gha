@@ -7,14 +7,14 @@ const router = express.Router();
 const {
   getAllUsers,
   getUser,
-  createUser,
+  getCurrentUser,
   updateUser,
   updateAvatar,
 } = require('../controllers/users');
 
 router.get('/users', getAllUsers);
 router.get('/users/:userId', getUser);
-router.post('/users', createUser);
+router.get('/users/me', getCurrentUser);
 router.patch('/users/me', updateUser);
 router.patch('/users/me/avatar', updateAvatar);
 

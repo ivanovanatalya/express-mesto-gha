@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": false,
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.1",
     "express": "^4.18.2",
     "express-rate-limit": "^6.7.0",
     "helmet": "^6.0.1",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.0",
     "mongosh": "^1.6.2",
     "validator": "^13.9.0"

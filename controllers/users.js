@@ -1,13 +1,15 @@
 // controllers/users.js
 // это файл контроллеров
-
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken
 const User = require('../models/users');
-
-const ERROR_CODE = 400;
-const NOT_FOUND_CODE = 404;
-const SERVER_ERROR_CODE = 500;
-const NOT_FOUND_ERR = new Error();
-NOT_FOUND_ERR.name = 'NotFoundError';
+const {
+  ERROR_CODE,
+  UNAUTH_CODE,
+  NOT_FOUND_CODE,
+  NOT_FOUND_ERR,
+  SERVER_ERROR_CODE,
+} = require('../constants');
 
 const getAllUsers = (req, res) => {
   User.find({})
@@ -39,20 +41,45 @@ const getUser = (req, res) => {
     });
 };
 
-const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(ERROR_CODE).send({
-          message: 'Переданы некорректные данные при создании пользователя',
-        });
+const getCurrentUser = (req, res) => {
+  const { _id: userId } = req.user;
+  User.findById(userId)
+    .then((user) => {
+      if (user === null) {
+        throw NOT_FOUND_ERR;
       }
+      return res.send({ data: user });
+    })
+    .catch(() => res.status(SERVER_ERROR_CODE).send({ message: 'Произошла ошибка' }));
+};
 
-      return res.status(SERVER_ERROR_CODE).send({ message: 'Произошла ошибка' });
-    });
+const createUser = (req, res) => {
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
+
+  bcrypt.hash(password, 10)
+    .then((hashPass) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      hashPass,
+    })
+      .then((user) => res.send({ data: user }))
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          return res.status(ERROR_CODE).send({
+            message: 'Переданы некорректные данные при создании пользователя',
+          });
+        }
+        
+        return res.status(SERVER_ERROR_CODE).send({ message: 'Произошла ошибка' });
+      }));
 };
 
 const updateUser = (req, res) => {
@@ -112,10 +139,29 @@ const updateAvatar = (req, res) => {
     });
 };
 
+const login = (req, res) => {
+  const { email, password } = req.body;
+  User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: 7200 });
+      return res.send({ token });
+    })
+    .catch((err) => {
+      if (err.name === 'NotFoundError') {
+        return res.status(UNAUTH_CODE).send({
+          message: 'Пользователь не найден',
+        });
+      }
+      return res.status(SERVER_ERROR_CODE).send({ message: 'Произошла ошибка' });
+    });
+};
+
 module.exports = {
   getAllUsers,
   getUser,
+  getCurrentUser,
   createUser,
   updateUser,
   updateAvatar,
+  login,
 };
