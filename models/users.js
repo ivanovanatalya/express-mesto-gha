@@ -2,7 +2,7 @@
 const validator = require('validator');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { NOT_FOUND_ERR } = require('../middlewares/errors');
+const { NOT_FOUND_ERR, URL_REGEX } = require('../middlewares/errors');
 
 // Опишем схему:
 const userSchema = new mongoose.Schema({
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     validate: {
-      validator: (v) => /https?:\/\/(?:www.)?[0-9A-z-._~:/?#[\]@!$&'()*+,;=]+/.test(v),
+      validator: (v) => URL_REGEX.test(v),
       message: 'Некорректный URL',
     },
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',

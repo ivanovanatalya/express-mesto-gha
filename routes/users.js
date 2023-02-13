@@ -12,6 +12,7 @@ const {
   updateUser,
   updateAvatar,
 } = require('../controllers/users');
+const { URL_REGEX } = require('../middlewares/errors');
 
 router.get('/users', getAllUsers);
 router.get('/users/me', getCurrentUser);
@@ -28,7 +29,7 @@ router.get('/users/:userId', celebrate({
 }), getUser);
 router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().uri(),
+    avatar: Joi.string().regex(URL_REGEX),
   }),
 }), updateAvatar);
 

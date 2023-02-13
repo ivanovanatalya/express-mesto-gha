@@ -12,6 +12,7 @@ NOT_FOUND_ERR.name = 'NotFoundError';
 NOT_FOUND_ERR.statusCode = NOT_FOUND_CODE;
 const GENERAL_ERR = new Error();
 GENERAL_ERR.statusCode = ERROR_CODE;
+const URL_REGEX = /https?:\/\/(?:www.)?[0-9A-z-._~:/?#[\]@!$&'()*+,;=]+/;
 
 const errorHandler = (err, req, res) => {
   // если у ошибки нет статуса, выставляем 500
@@ -36,5 +37,6 @@ module.exports = {
   DATA_CONFLICT_CODE,
   SERVER_ERROR_CODE,
   GENERAL_ERR,
+  URL_REGEX,
   errorHandler,
 };

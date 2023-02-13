@@ -10,7 +10,7 @@ const userRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
-const { errorHandler } = require('./middlewares/errors');
+const { errorHandler, URL_REGEX } = require('./middlewares/errors');
 
 const app = express();
 
@@ -41,7 +41,7 @@ app.post('/signup', celebrate({
     password: Joi.string(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().uri(),
+    avatar: Joi.string().regex(URL_REGEX),
   }),
 }), createUser);
 app.post('/signin', celebrate({
