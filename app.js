@@ -56,7 +56,7 @@ app.use(auth);
 app.use(userRoutes);
 app.use(cardsRoutes);
 
-app.use(errors);
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(3000);
