@@ -69,7 +69,8 @@ const createUser = (req, res, next) => {
       password: hashPass,
     })
       .then((user) => {
-        res.send(user);
+        const { password: psw, ...userRes } = user._doc;
+        res.send(userRes);
       })
       .catch((err) => {
         if (err.name === 'ValidationError') {
