@@ -41,8 +41,9 @@ const deleteCard = (req, res, next) => {
         throw FORBIDDEN_ERR;
       }
     })
-    .then(Card.deleteOne({ _id: cardId }))
-    .then(() => res.send({ message: 'Карточка удалена' }))
+    .then(Card.findByIdAndDelete(cardId)
+      .then(() => res.send({ message: 'Карточка удалена' }))
+      .catch(next))
     .catch((err) => {
       if (err.name === 'CastError') {
         GENERAL_ERR.name = err.name;

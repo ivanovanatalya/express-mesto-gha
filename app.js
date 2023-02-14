@@ -46,7 +46,7 @@ app.post('/signup', celebrate({
 }), createUser);
 app.post('/signin', celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required(),
+    email: Joi.string().required().email(),
     password: Joi.string().required(),
   }),
 }), login);

@@ -68,7 +68,7 @@ const createUser = (req, res, next) => {
       email,
       password: hashPass,
     })
-      .then((user) => res.send({ data: user }))
+      .then(() => res.send({ message: 'user created' }))
       .catch((err) => {
         if (err.name === 'ValidationError') {
           GENERAL_ERR.name = err.name;
@@ -151,7 +151,7 @@ const updateAvatar = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  User.findUserByCredentials(email, password, next)
+  User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: 7200 });
       return res.send({ token });
