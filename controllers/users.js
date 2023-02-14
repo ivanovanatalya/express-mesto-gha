@@ -68,7 +68,15 @@ const createUser = (req, res, next) => {
       email,
       password: hashPass,
     })
-      .then(() => res.send({ message: 'user created' }))
+      .then(() => {
+        res.send({
+          name,
+          about,
+          avatar,
+          email,
+          password,
+        });
+      })
       .catch((err) => {
         if (err.name === 'ValidationError') {
           GENERAL_ERR.name = err.name;
