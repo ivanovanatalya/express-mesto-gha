@@ -34,10 +34,10 @@ const deleteCard = (req, res, next) => {
   const { _id: userId } = req.user;
   Card.findById({ _id: cardId })
     .then((card) => {
-      if (!card || card.owner !== userId) {
+      if (!card) {
         throw NOT_FOUND_ERR;
       }
-      if (card.owner !== userId) {
+      if (!card.owner.equals(userId)) {
         throw FORBIDDEN_ERR;
       }
     })

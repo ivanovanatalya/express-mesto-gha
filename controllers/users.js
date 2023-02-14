@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken
 const User = require('../models/users');
 const {
-  UNAUTH_CODE,
+  UNAUTH_ERR,
   FORBIDDEN_ERR,
   NOT_FOUND_ERR,
   GENERAL_ERR,
@@ -97,7 +97,7 @@ const updateUser = (req, res, next) => {
       if (user === null) {
         throw NOT_FOUND_ERR;
       }
-      if (user._id !== req.user._id) {
+      if (!user._id.equals(req.user._id)) {
         throw FORBIDDEN_ERR;
       }
       return res.send({ data: user });
@@ -129,7 +129,7 @@ const updateAvatar = (req, res, next) => {
       if (user === null) {
         throw NOT_FOUND_ERR;
       }
-      if (user._id !== req.user._id) {
+      if (!user._id.equals(req.user._id)) {
         throw FORBIDDEN_ERR;
       }
       res.send({ data: user });
@@ -151,16 +151,14 @@ const updateAvatar = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-  User.findUserByCredentials(email, password)
+  User.findUserByCredentials(email, password, next)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: 7200 });
       return res.send({ token });
     })
     .catch((err) => {
       if (err.name === 'NotFoundError') {
-        NOT_FOUND_ERR.statusCode = UNAUTH_CODE;
-        NOT_FOUND_ERR.message = 'Пользователь не найден';
-        next(NOT_FOUND_ERR);
+        next(UNAUTH_ERR);
       }
       next(err);
     });
