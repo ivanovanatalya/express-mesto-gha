@@ -20,7 +20,6 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const { _id: owner } = req.user;
   Card.create({ name, link, owner })
-    .populate(['owner', 'likes'])
     .then((card) => res.status(CREATED_CODE).send({ data: card }))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
@@ -42,9 +41,8 @@ const deleteCard = (req, res, next) => {
         throw new ForbiddenError();
       }
     })
-    .then(Card.findByIdAndDelete(cardId)
-      .then(() => res.send({ message: 'Карточка удалена' }))
-      .catch(next))
+    .then(Card.findByIdAndDelete(cardId))
+    .then(() => res.send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         return next(new GeneralError('Карточка с указанным _id не найдена'));

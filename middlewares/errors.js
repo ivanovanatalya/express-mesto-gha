@@ -1,7 +1,7 @@
 const CREATED_CODE = 201;
 class GeneralError extends Error {
   constructor(message = 'error') {
-    super(mes);
+    super(message);
     this.name = 'GeneralError';
     this.statusCode = 400;
   }

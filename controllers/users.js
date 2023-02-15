@@ -69,7 +69,6 @@ const createUser = (req, res, next) => {
         res.send(userRes);
       })
       .catch((err) => {
-        console.log(mongoose.Error)
         if (err instanceof mongoose.Error.ValidationError) {
           return next(new GeneralError('Переданы некорректные данные при создании пользователя'));
         }
