@@ -4,8 +4,6 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken
 const User = require('../models/users');
 const {
-  UNAUTH_ERR,
-  FORBIDDEN_ERR,
   NOT_FOUND_ERR,
   GENERAL_ERR,
   DATA_CONFLICT_CODE,
@@ -32,9 +30,9 @@ const getUser = (req, res, next) => {
         if (err.name === 'CastError') {
           GENERAL_ERR.name = err.name;
           GENERAL_ERR.message = 'Передан некорректный _id';
-          next(GENERAL_ERR);
+          return next(GENERAL_ERR);
         }
-        next(err);
+        return next(err);
       },
     );
 };
@@ -69,23 +67,23 @@ const createUser = (req, res, next) => {
       password: hashPass,
     })
       .then((user) => {
-        const { password: psw, ...userRes } = user._doc;
+        const { password: psw, ...userRes } = user;
         res.send(userRes);
       })
       .catch((err) => {
         if (err.name === 'ValidationError') {
           GENERAL_ERR.name = err.name;
           GENERAL_ERR.message = 'Переданы некорректные данные при создании пользователя';
-          next(GENERAL_ERR);
+          return next(GENERAL_ERR);
         }
 
         if (err.code === 11000) {
           const duplicateErr = new Error();
           duplicateErr.statusCode = DATA_CONFLICT_CODE;
           duplicateErr.message = 'e-mail already exists';
-          next(duplicateErr);
+          return next(duplicateErr);
         }
-        next(err);
+        return next(err);
       }));
 };
 
@@ -100,23 +98,20 @@ const updateUser = (req, res, next) => {
       if (user === null) {
         throw NOT_FOUND_ERR;
       }
-      if (!user._id.equals(req.user._id)) {
-        throw FORBIDDEN_ERR;
-      }
       return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         GENERAL_ERR.name = err.name;
         GENERAL_ERR.message = 'Переданы некорректные данные при создании пользователя';
-        next(GENERAL_ERR);
+        return next(GENERAL_ERR);
       }
-      if (err.name === 'CastError' || err.name === 'NotFoundError') {
+      if (err.name === 'NotFoundError') {
         NOT_FOUND_ERR.name = err.name;
         NOT_FOUND_ERR.message = 'Пользователь по указанному _id не найден';
-        next(NOT_FOUND_ERR);
+        return next(NOT_FOUND_ERR);
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -132,23 +127,20 @@ const updateAvatar = (req, res, next) => {
       if (user === null) {
         throw NOT_FOUND_ERR;
       }
-      if (!user._id.equals(req.user._id)) {
-        throw FORBIDDEN_ERR;
-      }
       res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         GENERAL_ERR.name = err.name;
         GENERAL_ERR.message = 'Переданы некорректные данные при создании пользователя';
-        next(GENERAL_ERR);
+        return next(GENERAL_ERR);
       }
       if (err.name === 'CastError' || err.name === 'NotFoundError') {
         NOT_FOUND_ERR.name = err.name;
         NOT_FOUND_ERR.message = 'Пользователь по указанному _id не найден';
-        next(NOT_FOUND_ERR);
+        return next(NOT_FOUND_ERR);
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -159,12 +151,7 @@ const login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: 7200 });
       return res.send({ token });
     })
-    .catch((err) => {
-      if (err.name === 'NotFoundError') {
-        next(UNAUTH_ERR);
-      }
-      next(err);
-    });
+    .catch(next);
 };
 
 module.exports = {

@@ -2,7 +2,6 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const { celebrate, errors, Joi } = require('celebrate');
@@ -33,7 +32,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 // подключаем мидлвары, роуты и всё остальное...
 
-app.use(bodyParser.json()); // для собирания JSON-формата
+app.use(express.json()); // для собирания JSON-формата
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({

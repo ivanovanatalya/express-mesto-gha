@@ -6,6 +6,7 @@ const {
   FORBIDDEN_ERR,
   NOT_FOUND_ERR,
   GENERAL_ERR,
+  CREATED_CODE,
 } = require('../middlewares/errors');
 
 const getAllCards = (req, res, next) => {
@@ -18,14 +19,14 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const { _id: owner } = req.user;
   Card.create({ name, link, owner })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(CREATED_CODE).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         GENERAL_ERR.name = err.name;
         GENERAL_ERR.message = 'Переданы некорректные данные при создании карточки';
-        next(GENERAL_ERR);
+        return next(GENERAL_ERR);
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -48,13 +49,13 @@ const deleteCard = (req, res, next) => {
       if (err.name === 'CastError') {
         GENERAL_ERR.name = err.name;
         GENERAL_ERR.message = 'Карточка с указанным _id не найдена';
-        next(GENERAL_ERR);
+        return next(GENERAL_ERR);
       }
       if (err.name === 'NotFoundError') {
         NOT_FOUND_ERR.message = 'Карточка с указанным _id не найдена';
-        next(NOT_FOUND_ERR);
+        return next(NOT_FOUND_ERR);
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -71,16 +72,16 @@ const setLike = (req, res, next) => {
       return res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         GENERAL_ERR.name = err.name;
         GENERAL_ERR.message = 'Переданы некорректные данные для постановки лайка';
-        next(GENERAL_ERR);
+        return next(GENERAL_ERR);
       }
       if (err.name === 'NotFoundError') {
         NOT_FOUND_ERR.message = 'Карточка с указанным _id не найдена';
-        next(NOT_FOUND_ERR);
+        return next(NOT_FOUND_ERR);
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -97,22 +98,22 @@ const deleteLike = (req, res, next) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'CastError') {
         GENERAL_ERR.name = err.name;
         GENERAL_ERR.message = 'Переданы некорректные данные для снятия лайка';
-        next(GENERAL_ERR);
+        return next(GENERAL_ERR);
       }
       if (err.name === 'NotFoundError') {
         NOT_FOUND_ERR.message = 'Карточка с указанным _id не найдена';
-        next(NOT_FOUND_ERR);
+        return next(NOT_FOUND_ERR);
       }
-      next(err);
+      return next(err);
     });
 };
 
 const wrongPath = (req, res, next) => {
   NOT_FOUND_ERR.message = 'Неверный путь';
-  next(NOT_FOUND_ERR);
+  return next(NOT_FOUND_ERR);
 };
 
 module.exports = {

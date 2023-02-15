@@ -1,9 +1,17 @@
+const CREATED_CODE = 201;
 const ERROR_CODE = 400;
 const UNAUTH_CODE = 401;
 const UNAUTH_ERR = new Error();
 UNAUTH_ERR.name = 'UnauthError';
 UNAUTH_ERR.statusCode = UNAUTH_CODE;
-UNAUTH_ERR.message = 'Необходима авторизация';
+class UnauthError extends Error {
+  constructor() {
+    super();
+    this.name = 'UnauthError';
+    this.statusCode = 401;
+    this.message = 'Необходима авторизация';
+  }
+}
 const FORBIDDEN_CODE = 403;
 const FORBIDDEN_ERR = new Error();
 FORBIDDEN_ERR.statusCode = FORBIDDEN_CODE;
@@ -25,7 +33,7 @@ const errorHandler = (err, req, res, next) => {
   return res
     .status(statusCode)
     .send({
-      // проверяем статус и выставляем сообщение в зависимости от него
+    // проверяем статус и выставляем сообщение в зависимости от него
       message: statusCode === SERVER_ERROR_CODE
         ? 'На сервере произошла ошибка'
         : message,
@@ -33,6 +41,8 @@ const errorHandler = (err, req, res, next) => {
 };
 
 module.exports = {
+  UnauthError,
+  CREATED_CODE,
   UNAUTH_ERR,
   FORBIDDEN_ERR,
   NOT_FOUND_ERR,

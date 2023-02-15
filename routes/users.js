@@ -24,12 +24,12 @@ router.patch('/users/me', celebrate({
 }), updateUser);
 router.get('/users/:userId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().hex().length(24),
+    userId: Joi.string().required().hex().length(24),
   }),
 }), getUser);
 router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().regex(URL_REGEX),
+    avatar: Joi.string().required().regex(URL_REGEX),
   }),
 }), updateAvatar);
 
