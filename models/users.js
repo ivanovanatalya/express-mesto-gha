@@ -2,7 +2,7 @@
 const validator = require('validator');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const { UNAUTH_ERR, URL_REGEX } = require('../middlewares/errors');
+const { URL_REGEX, UnauthError } = require('../middlewares/errors');
 
 // Опишем схему:
 const userSchema = new mongoose.Schema({
@@ -46,13 +46,13 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(email,
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        throw UNAUTH_ERR;
+        throw new UnauthError();
       }
 
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            throw UNAUTH_ERR;
+            throw new UnauthError();
           }
 
           return user; // теперь user доступен

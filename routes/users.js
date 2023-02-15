@@ -3,7 +3,7 @@
 const express = require('express');
 const { celebrate, Joi } = require('celebrate');
 
-const router = express.Router();
+const usersRouter = express.Router();
 
 const {
   getAllUsers,
@@ -14,23 +14,23 @@ const {
 } = require('../controllers/users');
 const { URL_REGEX } = require('../middlewares/errors');
 
-router.get('/users', getAllUsers);
-router.get('/users/me', getCurrentUser);
-router.patch('/users/me', celebrate({
+usersRouter.get('/', getAllUsers);
+usersRouter.get('/me', getCurrentUser);
+usersRouter.patch('/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().required().min(2).max(30),
   }),
 }), updateUser);
-router.get('/users/:userId', celebrate({
+usersRouter.get('/:userId', celebrate({
   params: Joi.object().keys({
     userId: Joi.string().required().hex().length(24),
   }),
 }), getUser);
-router.patch('/users/me/avatar', celebrate({
+usersRouter.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().required().regex(URL_REGEX),
   }),
 }), updateAvatar);
 
-module.exports = router;
+module.exports = usersRouter;

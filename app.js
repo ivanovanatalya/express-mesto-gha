@@ -5,8 +5,7 @@ const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const { celebrate, errors, Joi } = require('celebrate');
-const userRoutes = require('./routes/users');
-const cardsRoutes = require('./routes/cards');
+const router = require('./routes/index');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { errorHandler, URL_REGEX } = require('./middlewares/errors');
@@ -52,8 +51,7 @@ app.post('/signin', celebrate({
 
 app.use(auth);
 
-app.use(userRoutes);
-app.use(cardsRoutes);
+app.use(router);
 
 app.use(errors());
 app.use(errorHandler);

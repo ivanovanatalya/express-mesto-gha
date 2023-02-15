@@ -2,11 +2,12 @@
 // это файл контроллеров
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken
+const { Mongoose } = require('mongoose');
 const User = require('../models/users');
 const {
-  NOT_FOUND_ERR,
-  GENERAL_ERR,
-  DATA_CONFLICT_CODE,
+  GeneralError,
+  DataConflictError,
+  NotFoundError,
 } = require('../middlewares/errors');
 
 const getAllUsers = (req, res, next) => {
@@ -20,17 +21,14 @@ const getUser = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (user === null) {
-        NOT_FOUND_ERR.message = 'Пользователь по указанному _id не найден';
-        throw NOT_FOUND_ERR;
+        throw new NotFoundError('Пользователь по указанному _id не найден');
       }
       return res.send({ data: user });
     })
     .catch(
       (err) => {
-        if (err.name === 'CastError') {
-          GENERAL_ERR.name = err.name;
-          GENERAL_ERR.message = 'Передан некорректный _id';
-          return next(GENERAL_ERR);
+        if (err instanceof Mongoose.Error.CastError) {
+          return next(new GeneralError('Передан некорректный _id'));
         }
         return next(err);
       },
@@ -42,7 +40,7 @@ const getCurrentUser = (req, res, next) => {
   User.findById(userId)
     .then((user) => {
       if (user === null) {
-        throw NOT_FOUND_ERR;
+        throw new NotFoundError('Пользователь по указанному _id не найден');
       }
       return res.send({ data: user });
     })
@@ -71,17 +69,12 @@ const createUser = (req, res, next) => {
         res.send(userRes);
       })
       .catch((err) => {
-        if (err.name === 'ValidationError') {
-          GENERAL_ERR.name = err.name;
-          GENERAL_ERR.message = 'Переданы некорректные данные при создании пользователя';
-          return next(GENERAL_ERR);
+        if (err instanceof Mongoose.Error.ValidationError) {
+          return next(new GeneralError('Переданы некорректные данные при создании пользователя'));
         }
 
         if (err.code === 11000) {
-          const duplicateErr = new Error();
-          duplicateErr.statusCode = DATA_CONFLICT_CODE;
-          duplicateErr.message = 'e-mail already exists';
-          return next(duplicateErr);
+          return next(new DataConflictError('e-mail already exists'));
         }
         return next(err);
       }));
@@ -96,20 +89,13 @@ const updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (user === null) {
-        throw NOT_FOUND_ERR;
+        throw new NotFoundError('Пользователь по указанному _id не найден');
       }
       return res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        GENERAL_ERR.name = err.name;
-        GENERAL_ERR.message = 'Переданы некорректные данные при создании пользователя';
-        return next(GENERAL_ERR);
-      }
-      if (err.name === 'NotFoundError') {
-        NOT_FOUND_ERR.name = err.name;
-        NOT_FOUND_ERR.message = 'Пользователь по указанному _id не найден';
-        return next(NOT_FOUND_ERR);
+      if (err instanceof Mongoose.Error.ValidationError) {
+        return next(new GeneralError('Переданы некорректные данные при создании пользователя'));
       }
       return next(err);
     });
@@ -125,20 +111,16 @@ const updateAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (user === null) {
-        throw NOT_FOUND_ERR;
+        throw new NotFoundError('Пользователь по указанному _id не найден');
       }
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        GENERAL_ERR.name = err.name;
-        GENERAL_ERR.message = 'Переданы некорректные данные при создании пользователя';
-        return next(GENERAL_ERR);
+      if (err instanceof Mongoose.Error.ValidationError) {
+        return next(new GeneralError('Переданы некорректные данные при создании пользователя'));
       }
-      if (err.name === 'CastError' || err.name === 'NotFoundError') {
-        NOT_FOUND_ERR.name = err.name;
-        NOT_FOUND_ERR.message = 'Пользователь по указанному _id не найден';
-        return next(NOT_FOUND_ERR);
+      if (err instanceof Mongoose.Error.CastError) {
+        return next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
       return next(err);
     });
