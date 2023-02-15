@@ -1,6 +1,6 @@
 // controllers/cards.js
 // это файл контроллеров
-const { Mongoose } = require('mongoose');
+const { mongoose } = require('mongoose');
 const Card = require('../models/cards');
 const {
   CREATED_CODE,
@@ -23,7 +23,7 @@ const createCard = (req, res, next) => {
     .populate(['owner', 'likes'])
     .then((card) => res.status(CREATED_CODE).send({ data: card }))
     .catch((err) => {
-      if (err instanceof Mongoose.Error.ValidationError) {
+      if (err instanceof mongoose.Error.ValidationError) {
         return next(new GeneralError('Переданы некорректные данные при создании карточки'));
       }
       return next(err);
@@ -46,7 +46,7 @@ const deleteCard = (req, res, next) => {
       .then(() => res.send({ message: 'Карточка удалена' }))
       .catch(next))
     .catch((err) => {
-      if (err instanceof Mongoose.Error.CastError) {
+      if (err instanceof mongoose.Error.CastError) {
         return next(new GeneralError('Карточка с указанным _id не найдена'));
       }
       return next(err);
@@ -67,7 +67,7 @@ const setLike = (req, res, next) => {
       return res.send({ data: card });
     })
     .catch((err) => {
-      if (err instanceof Mongoose.Error.CastError) {
+      if (err instanceof mongoose.Error.CastError) {
         return next(new GeneralError('Переданы некорректные данные для постановки лайка'));
       }
       return next(err);
@@ -88,7 +88,7 @@ const deleteLike = (req, res, next) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err instanceof Mongoose.Error.CastError) {
+      if (err instanceof mongoose.Error.CastError) {
         return next(new GeneralError('Переданы некорректные данные для снятия лайка'));
       }
       return next(err);

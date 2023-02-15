@@ -1,46 +1,41 @@
 const CREATED_CODE = 201;
 class GeneralError extends Error {
-  constructor() {
-    super();
+  constructor(message = 'error') {
+    super(mes);
     this.name = 'GeneralError';
     this.statusCode = 400;
-    this.message = 'error';
   }
 }
 
 class UnauthError extends Error {
-  constructor() {
-    super();
+  constructor(message = 'Необходима авторизация') {
+    super(message);
     this.name = 'UnauthError';
     this.statusCode = 401;
-    this.message = 'Необходима авторизация';
   }
 }
 
 class ForbiddenError extends Error {
-  constructor() {
-    super();
+  constructor(message = 'Действие запрещено') {
+    super(message);
     this.name = 'ForbiddenError';
     this.statusCode = 403;
-    this.message = 'Действие запрещено';
   }
 }
 
 class NotFoundError extends Error {
-  constructor() {
-    super();
+  constructor(message = 'not found') {
+    super(message);
     this.name = 'NotFoundError';
     this.statusCode = 404;
-    this.message = 'not found';
   }
 }
 
 class DataConflictError extends Error {
-  constructor() {
-    super();
+  constructor(message = 'data conflict') {
+    super(message);
     this.name = 'DataConflictError';
     this.statusCode = 409;
-    this.message = 'data conflict';
   }
 }
 

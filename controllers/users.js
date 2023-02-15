@@ -2,7 +2,7 @@
 // это файл контроллеров
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); // импортируем модуль jsonwebtoken
-const { Mongoose } = require('mongoose');
+const { default: mongoose } = require('mongoose');
 const User = require('../models/users');
 const {
   GeneralError,
@@ -27,7 +27,7 @@ const getUser = (req, res, next) => {
     })
     .catch(
       (err) => {
-        if (err instanceof Mongoose.Error.CastError) {
+        if (err instanceof mongoose.Error.CastError) {
           return next(new GeneralError('Передан некорректный _id'));
         }
         return next(err);
@@ -69,7 +69,8 @@ const createUser = (req, res, next) => {
         res.send(userRes);
       })
       .catch((err) => {
-        if (err instanceof Mongoose.Error.ValidationError) {
+        console.log(mongoose.Error)
+        if (err instanceof mongoose.Error.ValidationError) {
           return next(new GeneralError('Переданы некорректные данные при создании пользователя'));
         }
 
@@ -94,7 +95,7 @@ const updateUser = (req, res, next) => {
       return res.send({ data: user });
     })
     .catch((err) => {
-      if (err instanceof Mongoose.Error.ValidationError) {
+      if (err instanceof mongoose.Error.ValidationError) {
         return next(new GeneralError('Переданы некорректные данные при создании пользователя'));
       }
       return next(err);
@@ -116,10 +117,10 @@ const updateAvatar = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err instanceof Mongoose.Error.ValidationError) {
+      if (err instanceof mongoose.Error.ValidationError) {
         return next(new GeneralError('Переданы некорректные данные при создании пользователя'));
       }
-      if (err instanceof Mongoose.Error.CastError) {
+      if (err instanceof mongoose.Error.CastError) {
         return next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
       return next(err);
