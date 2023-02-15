@@ -1,5 +1,3 @@
-// eslint-disable max-classes-per-file
-
 const CREATED_CODE = 201;
 class GeneralError extends Error {
   constructor() {
