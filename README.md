@@ -1,6 +1,6 @@
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
 # Проект Mesto фронтенд + бэкенд
-**Проектная работа 13**
+**Проектная работа 14**
 # Репозиторий [Mesto](https://github.com/ivanovanatalya/express-mesto-gha.git)
 
 ## Директории

@@ -119,9 +119,6 @@ const updateAvatar = (req, res, next) => {
       if (err instanceof mongoose.Error.ValidationError) {
         return next(new GeneralError('Переданы некорректные данные при создании пользователя'));
       }
-      if (err instanceof mongoose.Error.CastError) {
-        return next(new NotFoundError('Пользователь по указанному _id не найден'));
-      }
       return next(err);
     });
 };

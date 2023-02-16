@@ -32,7 +32,7 @@ const createCard = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
   const { _id: userId } = req.user;
-  Card.findByIdAndDelete(cardId)
+  Card.findById(cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка с указанным _id не найдена');
@@ -40,8 +40,9 @@ const deleteCard = (req, res, next) => {
       if (!card.owner.equals(userId)) {
         throw new ForbiddenError();
       }
-      res.send({ message: 'Карточка удалена', card });
     })
+    .then(() => Card.findByIdAndDelete(cardId))
+    .then(() => res.send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         return next(new GeneralError('Карточка с указанным _id не найдена'));
