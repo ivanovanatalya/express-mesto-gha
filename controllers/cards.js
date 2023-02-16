@@ -40,7 +40,7 @@ const deleteCard = (req, res, next) => {
       if (!card.owner.equals(userId)) {
         throw new ForbiddenError();
       }
-      res.send({ message: 'Карточка удалена', card })
+      res.send({ message: 'Карточка удалена', card });
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
